@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sodoku
@@ -24,7 +18,7 @@ namespace Sodoku
         {
             Initialize();
             PatternOne();
-            Cycle();
+            UpdateScreen();
         }
 
         private void PatternOne()
@@ -91,14 +85,12 @@ namespace Sodoku
         {
             SearchUp(x, y);
             SearchDown(x, y);
-            // TODO Search whole col
         }
 
         private void SearchHorizontal(int x, int y)
         {
             SearchRight(x, y);
             SearchLeft(x, y);
-            // TODO Search whole row
         }
 
         private void Confirm(int x, int y, int num)
@@ -148,27 +140,34 @@ namespace Sodoku
 
         private void SearchCube(int x, int y)
         {
-            switch(WhatCube(x, y))
+            switch (WhatCube(x, y))
             {
                 case 0:
-                    // CheckCube(x, y, 0, 3, 0, 3);
+                    CheckCube(x, y, 0, 3, 0, 3);
                     break;
                 case 1:
-                    // CheckCube(x, y, 0, 3, 3, 6);
+                    CheckCube(x, y, 3, 6, 0, 3);
                     break;
                 case 2:
+                    CheckCube(x, y, 6, 9, 0, 3);
                     break;
                 case 3:
+                    CheckCube(x, y, 0, 3, 3, 6);
                     break;
                 case 4:
+                    CheckCube(x, y, 3, 6, 3, 6);
                     break;
                 case 5:
+                    CheckCube(x, y, 6, 9, 3, 6);
                     break;
                 case 6:
+                    CheckCube(x, y, 0, 3, 6, 9);
                     break;
                 case 7:
+                    CheckCube(x, y, 3, 6, 6, 9);
                     break;
                 case 8:
+                    CheckCube(x, y, 6, 9, 6, 9);
                     break;
             }
         }
@@ -189,12 +188,8 @@ namespace Sodoku
         {
             Square current = SudokiGrid[x, y];
             for (int i = iStart; i < iEnd; i++)
-            {
                 for (int j = jStart; j < jEnd; j++)
-                {
                     current.RemovePossibilities(SudokiGrid[i, j].GetCertainty());
-                }
-            }
         }
 
         private void UpdateScreen()
@@ -290,7 +285,17 @@ namespace Sodoku
 
         private void BTNPossibilities_Click(object sender, EventArgs e)
         {
-            Square square = SudokiGrid[Convert.ToInt32(CBBX.Text) - 1, Convert.ToInt32(CBBY.Text) - 1];
+            PossibilityCheck(Convert.ToInt32(CBBX.Text) - 1, Convert.ToInt32(CBBY.Text) - 1);
+        }
+
+        private void PossibilityCheck(int x, int y)
+        {
+            Square square = SudokiGrid[x, y];
+            Console.WriteLine("Ollo?");
+            Console.WriteLine("Possibility Count: " + square.GetPossibilities().Count);
+            Console.WriteLine("Certainty is: " + square.GetCertainty());
+            if (square.GetPossibilities().Count == 0 && square.GetCertainty() == 0)
+                Console.WriteLine("Something's wrong here");
             foreach (int poss in square.GetPossibilities())
                 Console.WriteLine("Poss: " + poss);
         }
